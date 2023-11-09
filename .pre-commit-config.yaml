@@ -1,0 +1,67 @@
+default_stages: [ commit, merge-commit, push, prepare-commit-msg, commit-msg,
+                  post-checkout, post-commit, post-merge, post-rewrite ]
+exclude: |
+  (?x)(LICENSE|
+  \.(html|csv|svg)$)
+repos:
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 23.9.1
+    hooks:
+      - id: black-jupyter
+        fail_fast: true
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+      - id: check-added-large-files  # Prevent giant files from being committed.
+      - id: check-ast                # Simply check whether files parse as valid python.
+      - id: check-case-conflict      # Check for files with names that would conflict on a
+                                     # case-insensitive filesystem like macOS HFS+ or Windows
+                                     # FAT.
+      - id: check-merge-conflict     # Check for files that contain merge conflict strings.
+      - id: check-yaml               # checks yaml files for parseable syntax.
+      - id: detect-private-key       # Checks for the existence of private keys.
+      - id: end-of-file-fixer        # Makes sure files end in a newline and only a newline.
+      - id: mixed-line-ending        # Replaces or checks mixed line ending.
+      - id: trailing-whitespace      # Trims trailing whitespace.
+  - repo: https://github.com/nbQA-dev/nbQA
+    rev: 1.7.0
+    hooks:
+      - id: nbqa-check-ast
+      - id: nbqa-isort
+        additional_dependencies:
+          - isort==5.12.0
+      - id: nbqa-pyupgrade
+        additional_dependencies:
+          - pyupgrade==3.13.0
+        args: [--py310-plus]
+      - id: nbqa-mypy
+        additional_dependencies:
+          - mypy==1.5.1
+        args: [--allow-untyped-defs, --allow-untyped-call]
+      - id: nbqa-flake8
+        additional_dependencies:
+          - flake8==6.1.0
+          - flake8-bugbear==23.9.16
+          - flake8-comprehensions==3.14.0
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1  # Sync with nbqa version above
+    hooks:
+      - id: mypy
+        args: [--allow-untyped-defs, --allow-untyped-call]  # Sync with nbqa version above
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.12.0  # Sync with nbqa version above
+    hooks:
+      - id: isort
+        name: isort (python)
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.13.0  # Sync with nbqa version above
+    hooks:
+      - id: pyupgrade
+        args: [--py310-plus]
+  - repo: https://github.com/PyCQA/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        additional_dependencies:
+          - flake8-bugbear==23.9.16
+          - flake8-comprehensions==3.14.0
